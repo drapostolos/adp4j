@@ -1,9 +1,6 @@
 package org.sdp;
 
-import java.util.HashSet;
-
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.sdp.spi.PolledDirectory;
 

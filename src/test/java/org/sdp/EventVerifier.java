@@ -77,7 +77,7 @@ class EventVerifier {
 			String[] t = nameAndTime.split("/");
 			String fileName = t[0];
 			long lastModified = Long.parseLong(t[1]);
-			FileObject file = new StubbedPolledFile(fileName, lastModified);
+			FileObject file = new StubbedFileObject(fileName, lastModified);
 			list.add(file);
 		}
 		return list;

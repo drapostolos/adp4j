@@ -4,14 +4,14 @@ import java.io.IOException;
 
 import org.sdp.spi.FileObject;
 
-public class StubbedPolledFile extends FileObject{
+public class StubbedFileObject extends FileObject{
 	private final String name;
 	private final long lastModified;
 	
 	/*
 	 * Make a stub so equals/hashCode methods can be implemented correctly.
 	 */
-	public StubbedPolledFile(String name, long lastModified) {
+	public StubbedFileObject(String name, long lastModified) {
 		this.name = name;
 		this.lastModified = lastModified;
 	}
@@ -42,7 +42,7 @@ public class StubbedPolledFile extends FileObject{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		StubbedPolledFile other = (StubbedPolledFile) obj;
+		StubbedFileObject other = (StubbedFileObject) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;

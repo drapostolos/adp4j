@@ -27,8 +27,6 @@ import org.sdp.spi.PolledDirectory;
  * </pre></blockquote>
  *  
  * @param &ltT extends {@link MonitoredFileParameterized}&gt
- * 
- * @author ETXALPO
  *
  */
 public class DirectoryPoller implements Stoppable{

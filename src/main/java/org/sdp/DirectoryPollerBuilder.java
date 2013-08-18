@@ -12,7 +12,7 @@ import org.sdp.spi.PolledDirectory;
  */
 public class DirectoryPollerBuilder {
 	private static final String NULL_ARGUMENT_ERROR_MESSAGE = "null argument not allowed!";
-	static final String DEFAULT_THREAD_NAME = "DM-";
+	static final String DEFAULT_THREAD_NAME = "DirectoryPoller-";
 	private DirectoryPoller dp;
 	PolledDirectory directory;
 	
