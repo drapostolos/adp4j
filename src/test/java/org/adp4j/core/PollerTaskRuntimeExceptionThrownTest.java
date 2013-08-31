@@ -10,7 +10,7 @@ import org.adp4j.core.BeforePollingCycleEvent;
 import org.adp4j.core.DefaultFileFilter;
 import org.adp4j.core.DirectoryPoller;
 import org.adp4j.core.InitialContentEvent;
-import org.adp4j.core.Listener;
+import org.adp4j.core.Adp4jListener;
 import org.adp4j.core.ListenerNotifier;
 import org.adp4j.core.PollerTask;
 import org.adp4j.spi.PolledDirectory;
@@ -37,9 +37,9 @@ public class PollerTaskRuntimeExceptionThrownTest extends EventVerifier{
 		listenerMock = Mockito.mock(AbstractListener.class);
 		inOrder = Mockito.inOrder(listenerMock);
 		DirectoryPoller dp = Mockito.mock(DirectoryPoller.class);
-		Mockito.when(dp.getFileFilter()).thenReturn(new DefaultFileFilter());
+		Mockito.when(dp.getDefaultFileFilter()).thenReturn(new DefaultFileFilter());
 		dp.directories = new HashSet<PolledDirectory>(Arrays.asList(directory));
-		dp.notifier = new ListenerNotifier(new HashSet<Listener>(Arrays.asList(listenerMock)));
+		dp.notifier = new ListenerNotifier(new HashSet<Adp4jListener>(Arrays.asList(listenerMock)));
 		pollerTask = new PollerTask(dp);
 		
 		Mockito.when(directory.listFiles())

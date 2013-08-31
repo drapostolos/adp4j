@@ -10,6 +10,9 @@ abstract class AbstractDirectoryEvent extends Event{
 		this.directory = directory;
 	}
 	
+	/**
+	 * Return The {@link PolledDirectory} instance, where this event occurred. 
+	 */
 	public PolledDirectory getDirectory() {
 		return directory;
 	}

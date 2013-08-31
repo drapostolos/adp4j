@@ -6,55 +6,90 @@ import org.adp4j.spi.PolledDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AbstractListener implements DirectoryListener, IoErrorListener, DirectoryPollerListener, PollCycleListener{
+/**
+ * This is a Skeletal implementation of all {@link Adp4jListener} sub-interfaces. 
+ * Contains default implementations of all methods.
+ * <p>
+ * It is up to the client to implement any desired methods.
+ *
+ */
+public class AbstractListener implements DirectoryListener, IoErrorListener, DirectoryPollerListener, PollCycleListener, InitialContentListener{
 	private static final Logger logger = LoggerFactory.getLogger(AbstractListener.class);
 
+	/**
+	 * Dummy implementation doing nothing.
+	 */
 	@Override
 	public void beforeStart(BeforeStartEvent event) {
 	}
 
+	/**
+	 * Dummy implementation doing nothing.
+	 */
 	@Override
 	public void afterStop(AfterStopEvent event) {
 	}
 
+	/**
+	 * Dummy implementation doing nothing.
+	 */
 	@Override
 	public void beforePollingCycle(BeforePollingCycleEvent event) {
 	}
 
+	/**
+	 * Dummy implementation doing nothing.
+	 */
 	@Override
 	public void afterPollingCycle(AfterPollingCycleEvent event) {
 	}
 
+	/**
+	 * Logs any occurred I/O errors
+	 */
 	@Override
 	public void ioErrorRaised(IoErrorRaisedEvent event) {
-		String message = "+IOError raised when polling directory '%s'!"; 
+		String message = "I/O error raised when polling directory '%s'!"; 
 		PolledDirectory dir = event.getDirectory();
 		IOException e = event.getIoException();
 		logger.error(String.format(message, dir), e);
 	}
 
+	/**
+	 * Logs when an I/O error has ceased.
+	 */
 	@Override
 	public void ioErrorCeased(IoErrorCeasedEvent event) {
-		String message = "-IOError ceased when polling directory '%s'!"; 
+		String message = "I/O error ceased when polling directory '%s'!"; 
 		PolledDirectory dir = event.getDirectory();
 		logger.info(String.format(message, dir));
 	}
 
+	/**
+	 * Dummy implementation doing nothing.
+	 */
 	@Override
 	public void initialContent(InitialContentEvent event) {
 	}
 
+	/**
+	 * Dummy implementation doing nothing.
+	 */
 	@Override
 	public void fileAdded(FileAddedEvent event) {
 	}
 
+	/**
+	 * Dummy implementation doing nothing.
+	 */
 	@Override
 	public void fileRemoved(FileRemovedEvent event) {
 	}
 
+	/**
+	 * Dummy implementation doing nothing.
+	 */
 	@Override
 	public void fileModified(FileModifiedEvent event) {
 	}
-
-
 }

@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.adp4j.core.DirectoryPoller;
 import org.adp4j.core.FileAddedEvent;
 import org.adp4j.core.IoErrorRaisedEvent;
-import org.adp4j.spi.FileObject;
+import org.adp4j.spi.FileElement;
 import org.adp4j.spi.PolledDirectory;
 import org.fest.assertions.api.Assertions;
 import org.junit.Test;
@@ -35,13 +35,13 @@ public class EventsTest {
 		// given
 		DirectoryPoller dp = Mockito.mock(DirectoryPoller.class);
 		PolledDirectory directory = Mockito.mock(PolledDirectory.class);
-		FileObject file = Mockito.mock(FileObject.class);
+		FileElement file = Mockito.mock(FileElement.class);
 		
 		// when
 		FileAddedEvent event = new FileAddedEvent(dp, directory, file);
 		
 		// then
-		Assertions.assertThat(event.getFile()).isEqualTo(file);
+		Assertions.assertThat(event.getFileElement()).isEqualTo(file);
 		Assertions.assertThat(event.getDirectory()).isEqualTo(directory);
 		Assertions.assertThat(event.getDirectoryPoller()).isEqualTo(dp);
 		

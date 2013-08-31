@@ -1,11 +1,15 @@
 package org.adp4j.core;
 
-import org.adp4j.spi.FileObject;
+import org.adp4j.spi.FileElement;
 import org.adp4j.spi.PolledDirectory;
 
-public class FileRemovedEvent extends AbstractFileEvent {
+/**
+ * An event that represents a removed file in the {@link PolledDirectory}.
+ *
+ */
+public final class FileRemovedEvent extends AbstractFileEvent {
 
-	FileRemovedEvent(DirectoryPoller directoryPoller, PolledDirectory directory, FileObject file) {
+	FileRemovedEvent(DirectoryPoller directoryPoller, PolledDirectory directory, FileElement file) {
 		super(directoryPoller, directory, file);
 	}
 

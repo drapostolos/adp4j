@@ -2,29 +2,28 @@ package org.adp4j.core;
 
 import java.util.regex.Pattern;
 
-import org.adp4j.spi.FileObject;
-
+import org.adp4j.spi.FileElement;
 
 /**
- * A file filter that consider only files, where the file name matches the 
- * given <i>regex</>. 
+ * A {@link FileFilter} accepting only {@link FileElement}s, who's name matches 
+ * a regular expression.
  * 
  */
 public final class RegexFileFilter implements FileFilter{
 	private final Pattern pattern;
 
 	/**
-	 * The given <i>regex</i> must be a valid regular expression as described 
-	 * in {@link java.util.regex.Pattern}
+	 * Creates a new {@link FileFilter} that accepts only {@link FileElement}s, 
+	 * who's name matches the given <code>regex</code>. 
 	 * 
-	 * @param regex
+	 * @param regex a regular expression as defined in {@link Pattern}.
 	 */
 	public RegexFileFilter(String regex){
 		this.pattern = Pattern.compile(regex);
 	}
 
 	/** {@inheritDoc} */
-	public boolean accept(FileObject file){
+	public boolean accept(FileElement file){
 		return pattern.matcher(file.getName()).matches();
 	}
 }

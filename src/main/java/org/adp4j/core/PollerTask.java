@@ -14,8 +14,6 @@ import org.adp4j.spi.PolledDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 /**
  * This is the timer thread which is executed every n milliseconds
  * according to the setting of the directory poller. It investigates the
@@ -29,8 +27,8 @@ final class PollerTask extends TimerTask {
 	private final DirectoryPoller dp;
 	private final Map<PolledDirectory, Poller> pollers = new LinkedHashMap<PolledDirectory, Poller>();
 	private final ListenerNotifier notifier;
-	private Queue<Listener> listenersToRemove = new ConcurrentLinkedQueue<Listener>();
-	private Queue<Listener> listenersToAdd = new ConcurrentLinkedQueue<Listener>();
+	private Queue<Adp4jListener> listenersToRemove = new ConcurrentLinkedQueue<Adp4jListener>();
+	private Queue<Adp4jListener> listenersToAdd = new ConcurrentLinkedQueue<Adp4jListener>();
 	private Queue<PolledDirectory> directoriesToAdd = new ConcurrentLinkedQueue<PolledDirectory>();
 	private Queue<PolledDirectory> directoriesToRemove = new ConcurrentLinkedQueue<PolledDirectory>();;
 	final ExecutorService executor;
@@ -58,12 +56,14 @@ final class PollerTask extends TimerTask {
 		try {
 			executor.invokeAll(pollers.values());
 		} catch (InterruptedException e) {
-			String message = new StringBuilder()
-			.append("Internal poller thread of the DirectoryPoller was interrupted. ")
-			.append("Interruption is ignored! To stop the DirectoryPoller call its stop() ")
-			.append("method: DirectoryPoller.stop().")
-			.toString();
-			logger.error(message);
+			logger.error(
+					"Internal poller thread of the {} was interrupted. " +
+					"Interruption is ignored! To stop the {} call its stop() " +
+					"method: {}.stop().",
+					DirectoryPoller.class.getSimpleName(),
+					DirectoryPoller.class.getSimpleName(),
+					DirectoryPoller.class.getSimpleName()
+					);
 		}
 		notifier.notifyListeners(new AfterPollingCycleEvent(dp));
 		addRemoveListeners();
@@ -73,7 +73,9 @@ final class PollerTask extends TimerTask {
 	private void addRemoveDirectories() {
 		PolledDirectory directory;
 		while((directory = directoriesToAdd.poll()) != null){
-			pollers.put(directory, new Poller(dp, directory));
+			if(!pollers.containsKey(directory)){
+				pollers.put(directory, new Poller(dp, directory));
+			}
 		}
 		while((directory = directoriesToRemove.poll()) != null){
 			pollers.remove(directory);
@@ -81,7 +83,7 @@ final class PollerTask extends TimerTask {
 	}
 
 	private void addRemoveListeners() {
-		Listener listener;
+		Adp4jListener listener;
 		while((listener = listenersToAdd.poll()) != null){
 			notifier.addListener(listener);
 		}
@@ -90,11 +92,11 @@ final class PollerTask extends TimerTask {
 		}
 	}
 
-	void addListener(Listener listener) {
+	void addListener(Adp4jListener listener) {
 		listenersToAdd.add(listener);
 	}
 
-	void removeListener(Listener listener) {
+	void removeListener(Adp4jListener listener) {
 		listenersToRemove.add(listener);
 	}
 
@@ -108,10 +110,12 @@ final class PollerTask extends TimerTask {
 
 
 	synchronized void waitForExecutionToStop() {
-		// This method is called after the Timer has been canceled.
-		// If there is an ongoing poll while timer is canceled, this 
-		// method will block until the last poll has finished executing
-		// (since both this and the run() methods are synchronized).
+		/*
+		 * This method is called after the Timer has been canceled.
+		 * If there is an ongoing poll while timer is canceled, this
+		 * method will block until the last poll has finished executing
+		 * (since both this and the run() methods are synchronized).
+		 */
 	}
 
 	synchronized Set<PolledDirectory> getDirectories() {

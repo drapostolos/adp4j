@@ -8,6 +8,10 @@ abstract class Event{
 		dp = directoryPoller;
 	}
 	
+	/**
+	 * Returns the {@link DirectoryPoller} instance which fired
+	 * this event.
+	 */
 	public DirectoryPoller getDirectoryPoller(){
 		return dp;
 	}

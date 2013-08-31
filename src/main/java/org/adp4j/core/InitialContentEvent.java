@@ -3,19 +3,31 @@ package org.adp4j.core;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.adp4j.spi.FileObject;
+import org.adp4j.spi.FileElement;
 import org.adp4j.spi.PolledDirectory;
 
-public final class InitialContentEvent extends AbstractDirectoryEvent{
-	private Set<FileObject> files;
+/**
+ * An event that provides the initial content of the {@link PolledDirectory}.
+ * <p>
+ * The initial content of a directory are the files/directories 
+ * it contains the first poll-cycle.
 
-	InitialContentEvent(DirectoryPoller dp, PolledDirectory directory, Set<FileObject> files) {
+ *
+ */
+public final class InitialContentEvent extends AbstractDirectoryEvent{
+	private final Set<FileElement> files;
+
+	InitialContentEvent(DirectoryPoller dp, PolledDirectory directory, Set<FileElement> files) {
 		super(dp, directory);
 		this.files = files;
 	}
-	
-	public Set<FileObject> getFiles(){
-		return new HashSet<FileObject>(files);
+
+	/**
+	 * Returns a set of all {@link FileElement}s contained in a {@link PolledDirectory}
+	 * at startup.
+	 */
+	public Set<FileElement> getFiles(){
+		return new HashSet<FileElement>(files);
 	}
 
 }

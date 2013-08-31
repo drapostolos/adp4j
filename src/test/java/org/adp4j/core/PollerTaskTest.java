@@ -19,11 +19,11 @@ import org.adp4j.core.FileRemovedEvent;
 import org.adp4j.core.InitialContentEvent;
 import org.adp4j.core.IoErrorCeasedEvent;
 import org.adp4j.core.IoErrorRaisedEvent;
-import org.adp4j.core.Listener;
+import org.adp4j.core.Adp4jListener;
 import org.adp4j.core.ListenerNotifier;
 import org.adp4j.core.PollerTask;
 import org.adp4j.core.RegexFileFilter;
-import org.adp4j.spi.FileObject;
+import org.adp4j.spi.FileElement;
 import org.adp4j.spi.PolledDirectory;
 import org.fest.assertions.api.Assertions;
 import org.junit.Before;
@@ -40,10 +40,10 @@ public class PollerTaskTest extends EventVerifier {
 		listenerMock = Mockito.mock(AbstractListener.class);
 		inOrder = Mockito.inOrder(listenerMock);
 		directoryPollerMock = Mockito.mock(DirectoryPoller.class);
-		Mockito.when(directoryPollerMock.getFileFilter()).thenReturn(new DefaultFileFilter());
+		Mockito.when(directoryPollerMock.getDefaultFileFilter()).thenReturn(new DefaultFileFilter());
 		directories.add(directoryMock);
 		directoryPollerMock.directories = directories;
-		directoryPollerMock.notifier = new ListenerNotifier(new HashSet<Listener>(Arrays.asList(listenerMock)));
+		directoryPollerMock.notifier = new ListenerNotifier(new HashSet<Adp4jListener>(Arrays.asList(listenerMock)));
 		pollerTask = new PollerTask(directoryPollerMock);
 	}
 	
@@ -51,7 +51,7 @@ public class PollerTaskTest extends EventVerifier {
 	public void filterOutAFile() throws Exception {
 		// given 
 		// This will change the filter used by the PollerTask
-		Mockito.when(directoryPollerMock.getFileFilter()).thenReturn(new RegexFileFilter("file[AB]"));
+		Mockito.when(directoryPollerMock.getDefaultFileFilter()).thenReturn(new RegexFileFilter("file[AB]"));
 		pollerTask = new PollerTask(directoryPollerMock);
 
 		Mockito.when(directoryMock.listFiles())
@@ -316,11 +316,11 @@ public class PollerTaskTest extends EventVerifier {
 		.thenReturn(list("fileA/1", "fileB/1"))
 		.thenReturn(list("fileA/1", "fileB/1"));
 
-		final List<FileObject> files = new ArrayList<FileObject>();
+		final List<FileElement> files = new ArrayList<FileElement>();
 		Mockito.doAnswer(new Answer<InitialContentEvent>() {
 			@Override
 			public InitialContentEvent answer(InvocationOnMock invocation) throws Throwable {
-				Set<FileObject> s = ((InitialContentEvent) invocation.getArguments()[0]).getFiles();
+				Set<FileElement> s = ((InitialContentEvent) invocation.getArguments()[0]).getFiles();
 				files.addAll(s);
 				return null;
 			}

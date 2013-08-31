@@ -1,7 +1,7 @@
 package org.adp4j.core;
 
 /**
- * The runtime exception of the Directory Monitor library.
+ * The runtime exception of the Abstract Directory Poller library.
  *
  */
 public final class DirectoryPollerException extends RuntimeException {

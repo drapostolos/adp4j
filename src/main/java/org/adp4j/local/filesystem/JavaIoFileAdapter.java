@@ -2,22 +2,32 @@ package org.adp4j.local.filesystem;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-import org.adp4j.spi.FileObject;
+import org.adp4j.spi.FileElement;
 import org.adp4j.spi.PolledDirectory;
 
-public class JavaIoFileAdapter extends FileObject implements PolledDirectory{
+public final class JavaIoFileAdapter implements FileElement, PolledDirectory{
 	private final File file;
 
 	public JavaIoFileAdapter(File file) {
+		if(file == null){
+			throw new NullPointerException("null argument not allowed!");
+		}
 		this.file = file;
 	}
 
 	@Override
 	public long lastModified() throws IOException {
-		return file.lastModified();
+		long lastModified = file.lastModified();
+		if(lastModified == 0L){
+			String message = 
+					"Unknown I/O error occured when retriveing lastModified "	+ 
+					"attribute for file '%s'.";
+			throw new IOException(String.format(message, file));
+		}
+		return lastModified;
 	}
 
 	@Override
@@ -29,7 +39,6 @@ public class JavaIoFileAdapter extends FileObject implements PolledDirectory{
 	public String getName() {
 		return file.getName();
 	}
-
 
 	@Override
 	public int hashCode() {
@@ -57,11 +66,11 @@ public class JavaIoFileAdapter extends FileObject implements PolledDirectory{
 	}
 
 	@Override
-	public List<FileObject> listFiles() throws IOException {
-		List<FileObject> result = new ArrayList<FileObject>();
+	public Set<FileElement> listFiles() throws IOException {
+		Set<FileElement> result = new LinkedHashSet<FileElement>();
 		File[] files = file.listFiles();
 		if(files == null){
-			String message = "Unknown IO-Error when listing files in directory '%s'.";
+			String message = "Unknown I/O error when listing files in directory '%s'.";
 			throw new IOException(String.format(message, file));
 		}
 		for(File child : file.listFiles()){
@@ -69,7 +78,7 @@ public class JavaIoFileAdapter extends FileObject implements PolledDirectory{
 		}
 		return result;
 	}
-	
+
 	@Override
 	public String toString() {
 		return file.toString();

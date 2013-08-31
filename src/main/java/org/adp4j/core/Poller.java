@@ -2,22 +2,22 @@ package org.adp4j.core;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.adp4j.spi.FileObject;
+import org.adp4j.spi.FileElement;
 import org.adp4j.spi.PolledDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class Poller implements Callable<Object>{
 	private static Logger logger = LoggerFactory.getLogger(PollerTask.class);
-	private final Map<FileObject, Long> currentListedFiles = new LinkedHashMap<FileObject, Long>();
-	private final Map<FileObject, Long> previousListedFiles = new LinkedHashMap<FileObject, Long>();
-	private final List<FileObject> modifiedFiles = new ArrayList<FileObject>();
+	private final Map<String, FileElementCacher> currentListedFiles = new LinkedHashMap<String, FileElementCacher>();
+	private final Map<String, FileElementCacher> previousListedFiles = new LinkedHashMap<String, FileElementCacher>();
+	private final List<FileElementCacher> modifiedFiles = new ArrayList<FileElementCacher>();
 	private final DirectoryPoller dp;
 	private final PolledDirectory directory;
 	private final FileFilter filter;
@@ -25,12 +25,12 @@ class Poller implements Callable<Object>{
 	private final boolean fileAddedEventEnabledForInitialContent;
 	private boolean isSecondPollCycleOrLater = false;
 	private boolean isFilesystemUnaccessible = true;
-	private HashMapDiffer<FileObject, Long> mapComparer;
+	private HashMapComparer<String, FileElementCacher> mapComparer;
 	
-	public Poller(DirectoryPoller dp, PolledDirectory directory) {
+	Poller(DirectoryPoller dp, PolledDirectory directory) {
 		this.dp = dp;
 		this.directory = directory;
-		this.filter = dp.getFileFilter();
+		this.filter = dp.getDefaultFileFilter();
 		this.notifier = dp.notifier;
 		this.fileAddedEventEnabledForInitialContent = dp.fileAddedEventEnabledForInitialContent;
 	}
@@ -48,7 +48,8 @@ class Poller implements Callable<Object>{
 			}
 			if(isFirstPollCycle() ){
 				// Only do this once, i.e. the first time files are listed successfully. 
-				notifier.notifyListeners(new InitialContentEvent(dp, directory, new HashSet<FileObject>(currentListedFiles.keySet())));
+				Set<FileElement> files = FileElementCacher.toFileElements(currentListedFiles);
+				notifier.notifyListeners(new InitialContentEvent(dp, directory, files));
 				isSecondPollCycleOrLater = true;
 			}
 		}
@@ -64,23 +65,24 @@ class Poller implements Callable<Object>{
 
 	private void updateModifiedFiles() {
 		modifiedFiles.clear();
-		for(FileObject f : currentListedFiles.keySet()){
-			if(isFileModified(f, currentListedFiles.get(f))){
+		for(FileElementCacher f : currentListedFiles.values()){
+			if(isFileModified(f)){
 				modifiedFiles.add(f);
 			}
 		}
 	}
-	private boolean isFileModified(FileObject f, long lastModified) {
-		if(previousListedFiles.containsKey(f)){
-			long previous = previousListedFiles.get(f);
-			return lastModified != previous;
+	private boolean isFileModified(FileElementCacher file) {
+		if(previousListedFiles.containsKey(file.name)){
+			long current = file.lastModified;
+			long previous = previousListedFiles.get(file.name).lastModified;
+			return current != previous;
 		}
 		return false;
 	}
 
 	private void listCurrentFilesAndNotifyListenersIfIoErrorRaisedOrCeased(){
 		try {
-			List<FileObject> files = directory.listFiles();
+			Set<FileElement> files = directory.listFiles();
 			if(files == null){
 				String message = new StringBuilder()
 				.append("Unknown underlying IO-error when listing files ")
@@ -88,14 +90,15 @@ class Poller implements Callable<Object>{
 				.toString();
 				throw new IOException(String.format(message, directory));
 			}
-			Map<FileObject, Long> temp = new LinkedHashMap<FileObject, Long>();
-			for(FileObject file : files){
+			Map<String, FileElementCacher> temp = new LinkedHashMap<String, FileElementCacher>();
+			for(FileElement file : files){
 				if(filter.accept(file)){
 					long lastModified = file.lastModified();
 					if(lastModified == 0L){
 						throw new IOException("Unknown underlying IO-Error. Method 'lastModified()' returned '0L' for file '" + file + "'");
 					}
-					temp.put(file, lastModified);
+					String name = file.getName();
+					temp.put(name, new FileElementCacher(file, name, lastModified));
 				}
 			}
 			if(isFilesystemUnaccessible()){
@@ -128,7 +131,7 @@ class Poller implements Callable<Object>{
 	}
 
 	private void setComparerForCurrentVersusPreviousListedFiles(){
-		mapComparer = new HashMapDiffer<FileObject, Long>(previousListedFiles, currentListedFiles);
+		mapComparer = new HashMapComparer<String, FileElementCacher>(previousListedFiles, currentListedFiles);
 	}
 
 	private boolean isDirectoryModified() {
@@ -136,15 +139,15 @@ class Poller implements Callable<Object>{
 	}
 
 	private void notifyListenersWithRemovedAddedModifiedFiles(){
-		for(FileObject file : mapComparer.getRemoved().keySet()){
-			notifier.notifyListeners(new FileRemovedEvent(dp, directory, file));
+		for(FileElementCacher file : mapComparer.getRemoved().values()){
+			notifier.notifyListeners(new FileRemovedEvent(dp, directory, file.fileElement));
 		}
 		
-		for(FileObject file : mapComparer.getAdded().keySet()){
-			notifier.notifyListeners(new FileAddedEvent(dp, directory, file));
+		for(FileElementCacher file : mapComparer.getAdded().values()){
+			notifier.notifyListeners(new FileAddedEvent(dp, directory, file.fileElement));
 		}
-		for(FileObject file : modifiedFiles){
-			notifier.notifyListeners(new FileModifiedEvent(dp, directory, file));
+		for(FileElementCacher file : modifiedFiles){
+			notifier.notifyListeners(new FileModifiedEvent(dp, directory, file.fileElement));
 		}
 	}
 

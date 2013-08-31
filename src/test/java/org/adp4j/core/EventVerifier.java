@@ -1,25 +1,10 @@
 package org.adp4j.core;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
-import org.adp4j.core.AbstractListener;
-import org.adp4j.core.AfterPollingCycleEvent;
-import org.adp4j.core.AfterStopEvent;
-import org.adp4j.core.BeforePollingCycleEvent;
-import org.adp4j.core.BeforeStartEvent;
-import org.adp4j.core.DirectoryPoller;
-import org.adp4j.core.FileAddedEvent;
-import org.adp4j.core.FileModifiedEvent;
-import org.adp4j.core.FileRemovedEvent;
-import org.adp4j.core.InitialContentEvent;
-import org.adp4j.core.IoErrorCeasedEvent;
-import org.adp4j.core.IoErrorRaisedEvent;
-import org.adp4j.core.PollerTask;
-import org.adp4j.spi.FileObject;
+import org.adp4j.spi.FileElement;
 import org.adp4j.spi.PolledDirectory;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
@@ -39,6 +24,9 @@ class EventVerifier {
 		}
 	}
 
+	/*
+	 * Dispatch event to the "verifyInOrder_" methods below.
+	 */
 	protected void verifyEventsInOrder(Class<?>... events) throws Exception {
 		for(Class<?> event : events){
 			Method m = getClass().getMethod("verifyInOrder_" + event.getSimpleName());
@@ -56,9 +44,6 @@ class EventVerifier {
 		inOrder.verify(listenerMock).afterPollingCycle(Mockito.any(AfterPollingCycleEvent.class));
 	}
 
-//	public void verifyInOrder_FileAddedEvent() {
-//		verifyInOrder_FileAddedEvent(1);
-//	}
 	public void verifyInOrder_FileAddedEvent() {
 		inOrder.verify(listenerMock).fileAdded(Mockito.any(FileAddedEvent.class));
 	}
@@ -84,19 +69,19 @@ class EventVerifier {
 	}
 
 	/*
-	 * input argument is in the form: "name/lastModified"
+	 * input argument is in the form: "file-name/lastModified"
 	 * Example "my.txt/1233"
 	 */
-	public List<FileObject> list(String... files) throws Exception {
-		List<FileObject> list = new ArrayList<FileObject>();
+	public Set<FileElement> list(String... files) throws Exception {
+		Set<FileElement> result = new LinkedHashSet<FileElement>();
 		for(String nameAndTime : files){
 			String[] t = nameAndTime.split("/");
 			String fileName = t[0];
 			long lastModified = Long.parseLong(t[1]);
-			FileObject file = new StubbedFileObject(fileName, lastModified);
-			list.add(file);
+			FileElement file = new StubbedFileObject(fileName, lastModified);
+			result.add(file);
 		}
-		return list;
+		return result;
 	}
 
 }

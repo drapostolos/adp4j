@@ -6,7 +6,7 @@ import java.util.Set;
 import org.adp4j.core.DirectoryListener;
 import org.adp4j.core.FileAddedEvent;
 import org.adp4j.core.IoErrorListener;
-import org.adp4j.core.Listener;
+import org.adp4j.core.Adp4jListener;
 import org.adp4j.core.ListenerNotifier;
 import org.fest.assertions.api.Assertions;
 import org.junit.Test;
@@ -18,7 +18,7 @@ public class NotifierTest {
 	@Test
 	public void constructNotifierWithNoListener() throws Exception {
 		// when
-		ListenerNotifier n = new ListenerNotifier(new HashSet<Listener>());
+		ListenerNotifier n = new ListenerNotifier(new HashSet<Adp4jListener>());
 		
 		// then
 		Assertions.assertThat(n.listenerToEventsMappings.size()).isEqualTo(0);
@@ -27,8 +27,8 @@ public class NotifierTest {
 	@Test
 	public void constructNotifierWithOneListener() throws Exception {
 		// given
-		Set<Listener> l = new HashSet<Listener>();
-		l.add(new Listener(){});
+		Set<Adp4jListener> l = new HashSet<Adp4jListener>();
+		l.add(new Adp4jListener(){});
 		
 		// when
 		ListenerNotifier n = new ListenerNotifier(l);
@@ -39,10 +39,10 @@ public class NotifierTest {
 	
 	@Test
 	public void AddAndRemoveListeners() throws Exception {
-		ListenerNotifier n = new ListenerNotifier(new HashSet<Listener>());
+		ListenerNotifier n = new ListenerNotifier(new HashSet<Adp4jListener>());
 		Assertions.assertThat(n.listenerToEventsMappings.size()).isEqualTo(0);
 		
-		Listener l = new Listener(){};
+		Adp4jListener l = new Adp4jListener(){};
 		n.addListener(l);
 		Assertions.assertThat(n.listenerToEventsMappings.size()).isEqualTo(1);
 		n.removeListener(l);
@@ -52,10 +52,10 @@ public class NotifierTest {
 	@Test
 	public void addSameListenerTwice() throws Exception {
 		// given
-		ListenerNotifier n = new ListenerNotifier(new HashSet<Listener>());
+		ListenerNotifier n = new ListenerNotifier(new HashSet<Adp4jListener>());
 		
 		// when
-		Listener l = new Listener(){};
+		Adp4jListener l = new Adp4jListener(){};
 		n.addListener(l);
 		n.addListener(l);
 		
@@ -66,7 +66,7 @@ public class NotifierTest {
 	@Test
 	public void notifyListenersOfFileAddedEvent() throws Exception {
 		// given
-		ListenerNotifier n = new ListenerNotifier(new HashSet<Listener>());
+		ListenerNotifier n = new ListenerNotifier(new HashSet<Adp4jListener>());
 		DirectoryListener l1 = Mockito.mock(DirectoryListener.class);
 		IoErrorListener l2 = Mockito.mock(IoErrorListener.class);
 		DirectoryListener l3 = Mockito.mock(DirectoryListener.class);

@@ -1,16 +1,11 @@
 package org.adp4j.core;
 
-import org.adp4j.spi.FileObject;
-
-
+import org.adp4j.spi.FileElement;
 
 final class DefaultFileFilter implements FileFilter{
 
-	/**
-	 * A default {@link FileFilter} that accepts all {@link MonitoredFileParameterized} instances.
-	 */
 	@Override
-	public boolean accept(FileObject file) {
+	public boolean accept(FileElement file) {
 		return true;
 	}
 

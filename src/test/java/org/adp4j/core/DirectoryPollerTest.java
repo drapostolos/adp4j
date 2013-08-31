@@ -1,19 +1,25 @@
 package org.adp4j.core;
 
-import org.adp4j.core.DirectoryPoller;
 import org.adp4j.spi.PolledDirectory;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 public class DirectoryPollerTest {
 
-	@Test(expected = IllegalStateException.class)
-	public void directoryNeverSet() {
+	@Rule public ExpectedException expectedEx = ExpectedException.none();
+	
+	@Test
+	public void shouldThrowExceptionWhenDirectoryNotSet() {
+		expectedEx.expect(IllegalStateException.class);
+		expectedEx.expectMessage(String.format("Unable to build the '%s'", DirectoryPoller.class.getSimpleName()));
+		expectedEx.expectMessage(String.format("%s.addDirectory(PolledDirectory)", DirectoryPollerBuilder.class.getSimpleName()));
 		DirectoryPoller.newBuilder().start();
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void addNullDirectory() {
+	public void shouldThrowExceptionWhenAddingDirectoryThatIsNull() {
 		// given
 		PolledDirectory directoryMock = Mockito.mock(PolledDirectory.class);
 		DirectoryPoller dp = DirectoryPoller.newBuilder()

@@ -5,42 +5,57 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.tools.FileObject;
+
 import org.adp4j.spi.PolledDirectory;
 
 /**
  * A builder class that configures and then returns a started 
  * {@link DirectoryPoller} instance.
  */
-public class DirectoryPollerBuilder {
+public final class DirectoryPollerBuilder {
 	private static final String NULL_ARGUMENT_ERROR_MESSAGE = "null argument not allowed!";
-	static final String DEFAULT_THREAD_NAME = "DirectoryPoller-";
 	private DirectoryPoller dp;
+	static final String DEFAULT_THREAD_NAME = "DirectoryPoller-";
 	Set<PolledDirectory> directories = new LinkedHashSet<PolledDirectory>();
 	
-	// Optional settings
+	// Optional settings, with default values:
 	long pollingIntervalInMillis = 1000;
 	FileFilter filter = new DefaultFileFilter();
 	String threadName = DEFAULT_THREAD_NAME;
 	boolean fileAddedEventEnabledForInitialContent = false;
 	boolean parallelDirectoryPollingEnabled = false;
-	Set<Listener> listeners = new HashSet<Listener>();
+	Set<Adp4jListener> listeners = new HashSet<Adp4jListener>();
 	
 
-	/**
-	 * Default constructor. Returns a new instance to 
-	 * configure a {@link DirectoryPoller}.
-	 */
 	DirectoryPollerBuilder(){ // package-private access only.
 	}
 
+	/**
+	 * Enable {@link FileAddedEvent} events to be fired for the initial 
+	 * content of the directories added in the {@link DirectoryPoller}. 
+	 * <p>
+	 * The initial content of a directory are the files/directories 
+	 * it contains the first poll-cycle.
+	 * <p>
+	 * Optional setting. Disabled by default.
+	 *  
+	 * @return {@link DirectoryPollerBuilder}
+	 */
 	public DirectoryPollerBuilder enableFileAddedEventsForInitialContent(){
 		fileAddedEventEnabledForInitialContent = true;
 		return this;
 	}
 	
 	/**
-	 * TODO
-	 * @return
+	 * Enable parallel polling of the directories added in the {@link DirectoryPoller}.
+	 * <p>
+	 * NOTE! 
+	 * This puts constraints on the added listeners to be thread safe.
+	 * <p>
+	 * Optional setting. Disabled by default.
+	 * 
+	 * @return {@link DirectoryPollerBuilder}
 	 */
 	public DirectoryPollerBuilder enableParallelPollingOfDirectories(){
 		parallelDirectoryPollingEnabled = true;
@@ -48,57 +63,61 @@ public class DirectoryPollerBuilder {
 	}
 	
 	/**
-	 * This sets the directory to monitor. Mandatory parameter.  
+	 * Adds the given <code>directory</code> to the list of polled directories. 
+	 * Mandatory to add at least one directory.
 	 * <p>
-	 * @param {@link MonitoredFileParameterized}, the directory to monitor
+	 * Once the {@link DirectoryPoller} has been built, it can be used to add 
+	 * additional polled directories, or remove polled directories.
 	 * 
-	 * @return DirectoryMonitorBuilder
+	 * @param directory - the directory to poll.
 	 * 
 	 * @throws 	NullPointerException - if the given argument is null.
-	 * 			IllegalStateException - if the given {@link MonitoredFileParameterized} is not a directory.
+	 * 
+	 * @return {@link DirectoryPollerBuilder}
 	 */
-	public DirectoryPollerBuilder addDirectory(PolledDirectory dir) {
-		if(dir == null){
+	public DirectoryPollerBuilder addDirectory(PolledDirectory directory) {
+		if(directory == null){
 			throw new NullPointerException(NULL_ARGUMENT_ERROR_MESSAGE);
 		}
-		directories.add(dir);
+		directories.add(directory);
 		return this;
 	}
 
 	/**
-	 * This sets the interval between each poll cycle. Optional parameter. 
+	 * Set the interval between each poll cycle. Optional parameter. 
 	 * Default value is 1000 milliseconds.
 	 * 
-	 * @param interval - a positive value in milliseconds.
+	 * @param interval - the interval between two poll-cycles.
+	 * @param unit - the unit of the interval. Example: TimeUnit.MINUTES
 	 * 
-	 * @return DirectoryMonitorBuilder
+	 * @return {@link DirectoryPollerBuilder}
 	 * 
-	 * @throws IllegalArgumentException for negative intervals.
+	 * @throws IllegalArgumentException if <code>interval</code> is negative.
 	 */
 	public DirectoryPollerBuilder setPollingInterval(long interval, TimeUnit unit) {
 		if(interval < 0){
 			throw new IllegalArgumentException("Argument 'interval' is negative: " + interval);
 		}
-		pollingIntervalInMillis = unit.toMillis(interval)
-				;
+		pollingIntervalInMillis = unit.toMillis(interval);
 		return this;
 	}
 
 	/**
-	 * Set a {@link FileFilter} to only consider {@link MonitoredFileParameterized} instances 
-	 * as matched by the given filter.  Optional parameter. Optional parameter. 
-	 * By default all {@link MonitoredFileParameterized} are considered.
+	 * Set a {@link FileFilter} to be used. Only {@link FileObject}'s 
+	 * Satisfying the filter will be considered.
+	 * <p>
+	 * Optional setting. By default all {@link FileObject}'s are 
+	 * satisfying the filter.
 	 * 
 	 * @param filter FileFilter
 	 * 
-	 * @return DirectoryMonitorBuilder
+	 * @return {@link DirectoryPollerBuilder}
 	 * 
-	 * @throws NullPointerException if the given argument is null.
+	 * @throws NullPointerException if <code>filter</code> is null.
 	 */
-	public DirectoryPollerBuilder setFileFilter(FileFilter filter) {
+	public DirectoryPollerBuilder setDefaultFileFilter(FileFilter filter) {
 		if(filter == null){
-			String message = "Argument 'filter' is: " + filter;
-			throw new NullPointerException(message);
+			throw new NullPointerException(NULL_ARGUMENT_ERROR_MESSAGE);
 		}
 		this.filter = filter;
 		return this;
@@ -106,14 +125,14 @@ public class DirectoryPollerBuilder {
 
 	/**
 	 * Changes the name of the associated polling thread to be equal 
-	 * to the argument name. Optional parameter. 
+	 * to the given <code>name</code>. 
+	 * <p>
+	 * Optional setting. By default each thread is named "DirectoryPoller-{X}", 
+	 * where {X} is a sequence number. I.e: "DirectoryPoller-1", "DirectoryPoller-2" etc. etc.
 	 * 
-	 * By default each thread is named "DM-{X}", where {X} is a sequence 
-	 * number. I.e: "DM-1", "DM-2" etc. etc.
+	 * @param name of thread.
 	 * 
-	 * @param name of thread
-	 * 
-	 * @return DirectoryMonitorBuilder
+	 * @return {@link DirectoryPollerBuilder}
 	 * 
 	 * @throws NullPointerException if the given argument is null.
 	 */
@@ -127,37 +146,35 @@ public class DirectoryPollerBuilder {
 	}
 
 	/**
-	 * Adds a DirectoryPreListener. A DirectoryPreListener always considers the 
-	 * monitored directory to be empty from the start. All added DirectoryPreListeners
-	 * will be notified with a "fileAdded" event for each file contained in the 
-	 * monitored directory when the {@link #start()} method is called.
+	 * Adds the given <code>listener</code> to the list of {@link Adp4jListener}'s
+	 * that receives notifications.
 	 * <p>
-	 * Optional method.  
-	 * <p>
-	 * @param listener DirectoryPreListener
+	 * Once the {@link DirectoryPoller} has been built, it can be used to 
+	 * add additional listeners, or remove listeners.
 	 * 
-	 * @return DirectoryMonitorBuilder
+	 * @param listener Implementation of any of the sub-interfaces of {@link Adp4jListener}-interface.
+	 * 
+	 * @return {@link DirectoryPollerBuilder}
 	 * 
 	 * @throws NullPointerException if the given argument is null.
 	 */
-	public DirectoryPollerBuilder addListener(Listener listener) {
+	public DirectoryPollerBuilder addListener(Adp4jListener listener) {
 		if(listener == null){
-			throw new NullPointerException("Argument is null.");
+			throw new NullPointerException(NULL_ARGUMENT_ERROR_MESSAGE);
 		}
 		listeners.add(listener);
 		return this;
 	}
 
 	/**
-	 * Builds a {@link DirectoryPoller} instance and starts monitoring 
-	 * the specified directory. This method will block until the first
-	 * polling has completed, to allow any added {@link DirectoryPreListener}
-	 * to be notified first. 
+	 * Builds a new {@link DirectoryPoller} instance and starts the poll-cycle 
+	 * mechanism.
+	 * <p>
+	 * This method will block until all {@link BeforeStartEvent} events has been
+	 * fired (and processed by all listeners.)
 	 * 
-	 * @return {@link DirectoryPoller}, monitoring the specified directory. 
+	 * @return {@link DirectoryPoller}. 
 	 * 
-	 * @throws InterruptedException if interrupted before the first polling
-	 * has finished.
 	 */
 	public DirectoryPoller start() {
 		dp = new DirectoryPoller(this);

@@ -1,11 +1,15 @@
 package org.adp4j.core;
 
-import org.adp4j.spi.FileObject;
+import org.adp4j.spi.FileElement;
 import org.adp4j.spi.PolledDirectory;
 
-public class FileAddedEvent extends AbstractFileEvent{
+/**
+ * An event that represents a new file added in the {@link PolledDirectory}.
+ *
+ */
+public final class FileAddedEvent extends AbstractFileEvent{
 
-	FileAddedEvent(DirectoryPoller directoryPoller, PolledDirectory directory, FileObject file) {
+	FileAddedEvent(DirectoryPoller directoryPoller, PolledDirectory directory, FileElement file) {
 		super(directoryPoller, directory, file);
 	}
 

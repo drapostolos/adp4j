@@ -3,10 +3,10 @@ package org.adp4j.core;
 import java.util.HashMap;
 import java.util.Map;
 
-final class HashMapDiffer<K, V> {
+final class HashMapComparer<K, V> {
 	private Map<K, V> m1, m2, added, removed;
 
-	HashMapDiffer(Map<K, V> m1, Map<K, V> m2) {
+	HashMapComparer(Map<K, V> m1, Map<K, V> m2) {
 		this.m1 = m1;
 		this.m2 = m2;
 		setAdded();

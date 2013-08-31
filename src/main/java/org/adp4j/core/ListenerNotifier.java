@@ -14,18 +14,18 @@ import org.slf4j.LoggerFactory;
 
 class ListenerNotifier {
 	private static Logger logger = LoggerFactory.getLogger(ListenerNotifier.class);
-	final Map<Listener, Set<Class<? extends Event>>> listenerToEventsMappings;
+	final Map<Adp4jListener, Set<Class<? extends Event>>> listenerToEventsMappings;
 	final Map<Class<? extends Event>, Method> eventToMethodMappings;
 	
-	ListenerNotifier(Set<Listener> listeners) {
-		listenerToEventsMappings = new HashMap<Listener, Set<Class<? extends Event>>>();
+	ListenerNotifier(Set<Adp4jListener> listeners) {
+		listenerToEventsMappings = new HashMap<Adp4jListener, Set<Class<? extends Event>>>();
 		eventToMethodMappings = new HashMap<Class<? extends Event>, Method>();
-		for(Listener listener : listeners){
+		for(Adp4jListener listener : listeners){
 			addListener(listener);
 		}
 	}
 
-	void addListener(Listener listener) {
+	void addListener(Adp4jListener listener) {
 		if(notAdded(listener)){
 			listenerToEventsMappings.put(listener, new HashSet<Class<? extends Event>>());
 			extractEventsSupportedByListener(listener);
@@ -33,11 +33,11 @@ class ListenerNotifier {
 	}
 	
 	
-	private boolean notAdded(Listener listener) {
+	private boolean notAdded(Adp4jListener listener) {
 		return !listenerToEventsMappings.containsKey(listener);
 	}
 
-	private void extractEventsSupportedByListener(Listener listener) {
+	private void extractEventsSupportedByListener(Adp4jListener listener) {
 		for(Class<?> interfaceType : getAllInterfaceTypesRepresentedBy(listener)){
 			if(isListenerType(interfaceType)){
 				extractEventsFromInterfaceAndAddToMappings(interfaceType, listener);
@@ -45,7 +45,7 @@ class ListenerNotifier {
 		}
 	}
 	private boolean isListenerType(Class<?> cls) {
-		return Listener.class.isAssignableFrom(cls);
+		return Adp4jListener.class.isAssignableFrom(cls);
 	}
 	private List<Class<?>> getAllInterfaceTypesRepresentedBy(Object o){
 		List<Class<?>> allInterfaces = new ArrayList<Class<?>>();
@@ -59,7 +59,7 @@ class ListenerNotifier {
 		interfaces.addAll(Arrays.asList(cls.getInterfaces()));
 		getAllInterfaces(cls.getSuperclass(), interfaces);
 	}
-	private void extractEventsFromInterfaceAndAddToMappings(Class<?> interfaceType, Listener listener) {
+	private void extractEventsFromInterfaceAndAddToMappings(Class<?> interfaceType, Adp4jListener listener) {
 		for(Method method : interfaceType.getMethods()){
 			Class<?>[] paramTypes = method.getParameterTypes();
 			if(isEventMethod(paramTypes)){
@@ -79,20 +79,20 @@ class ListenerNotifier {
 		return paramTypes.length == 1 && Event.class.isAssignableFrom(paramTypes[0]);
 	}
 
-	void removeListener(Listener listener) {
+	void removeListener(Adp4jListener listener) {
 		listenerToEventsMappings.remove(listener);
 	}
 
 	void notifyListeners(Event event) {
 		Class<?> eventType = event.getClass();
-		for(Listener listener : listenerToEventsMappings.keySet()){
+		for(Adp4jListener listener : listenerToEventsMappings.keySet()){
 			if(listenerToEventsMappings.get(listener).contains(eventType)){
 				Method method = eventToMethodMappings.get(eventType);
 				notifyListener(listener, method, event);
 			}
 		}
 	}
-	private void notifyListener(Listener listener, Method method, Event event) {
+	private void notifyListener(Adp4jListener listener, Method method, Event event) {
 		try {
 			method.invoke(listener, event);
 		} catch (Throwable t) {

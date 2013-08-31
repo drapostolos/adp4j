@@ -16,7 +16,7 @@ public class DirectoryPollerBuilderTest {
 
 	@Test(expected = NullPointerException.class)
 	public void nullFileFilter() throws Exception {
-		builder.setFileFilter(null);
+		builder.setDefaultFileFilter(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)

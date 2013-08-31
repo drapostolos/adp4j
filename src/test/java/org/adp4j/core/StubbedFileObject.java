@@ -2,15 +2,15 @@ package org.adp4j.core;
 
 import java.io.IOException;
 
-import org.adp4j.spi.FileObject;
+import org.adp4j.spi.FileElement;
 
-public class StubbedFileObject extends FileObject{
+/*
+ * Make a stub so equals/hashCode methods can be implemented correctly.
+ */
+public class StubbedFileObject implements FileElement{
 	private final String name;
 	private final long lastModified;
 	
-	/*
-	 * Make a stub so equals/hashCode methods can be implemented correctly.
-	 */
 	public StubbedFileObject(String name, long lastModified) {
 		this.name = name;
 		this.lastModified = lastModified;

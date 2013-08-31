@@ -1,18 +1,20 @@
 package org.adp4j.core;
 
-import org.adp4j.spi.FileObject;
+import org.adp4j.spi.FileElement;
+import org.adp4j.spi.PolledDirectory;
 
 
 /**
- * Instances of this interface is passed to the {@link MonitoredFileParameterized#listFiles(FileFilter)} 
- * method. It is used to filter which instances of {@link MonitoredFileParameterized} to list or not to list
- * in a monitored directory.
+ * A filter applied when listing {@link FileElement}s in a {@link PolledDirectory}.
+ * Only {@link FileElement} satisfying this filter will be considered.
  */
 public interface FileFilter {
+
 	/**
-	 * @param file
-	 * @return true if the given <i>file</i> is accepted by this filter or not.
+	 * Return true if the given <code>file</code> is accepted by this filter,
+	 * otherwise returns false.
+	 * @param file 
 	 */
-    boolean accept(FileObject file);
+    boolean accept(FileElement file);
 
 }

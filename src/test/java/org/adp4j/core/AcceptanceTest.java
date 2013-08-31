@@ -1,20 +1,10 @@
 package org.adp4j.core;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.adp4j.core.AbstractListener;
-import org.adp4j.core.AfterPollingCycleEvent;
-import org.adp4j.core.AfterStopEvent;
-import org.adp4j.core.BeforePollingCycleEvent;
-import org.adp4j.core.BeforeStartEvent;
-import org.adp4j.core.DirectoryPoller;
-import org.adp4j.core.FileAddedEvent;
-import org.adp4j.core.InitialContentEvent;
-import org.adp4j.core.RegexFileFilter;
-import org.adp4j.spi.FileObject;
+import org.adp4j.spi.FileElement;
 import org.adp4j.spi.PolledDirectory;
 import org.fest.assertions.api.Assertions;
 import org.junit.Before;
@@ -142,16 +132,16 @@ public class AcceptanceTest extends EventVerifier {
 		dp.addDirectory(directoryMock2);
 		
 		// then 
-		TimeUnit.MILLISECONDS.sleep(10); // to assure a polling cycle has passed
-		Assertions.assertThat(dp.getDirectories()).contains(directoryMock, directoryMock2);
+		TimeUnit.MILLISECONDS.sleep(15); // to assure a polling cycle has passed
+		Assertions.assertThat(dp.getPolledDirectories()).contains(directoryMock, directoryMock2);
 		
 		// when 
 		dp.removeDirectory(directoryMock);
 		dp.removeDirectory(directoryMock2);
 		
 		// then
-		TimeUnit.MILLISECONDS.sleep(10); // to assure a polling cycle has passed
-		Assertions.assertThat(dp.getDirectories()).isEmpty();
+		TimeUnit.MILLISECONDS.sleep(15); // to assure a polling cycle has passed
+		Assertions.assertThat(dp.getPolledDirectories()).isEmpty();
 		
 		dp.stop();
 	}
@@ -251,11 +241,11 @@ public class AcceptanceTest extends EventVerifier {
 		Mockito.when(directoryMock.listFiles())
 		.thenReturn(list("a.txt/12", "b.xml/11"));
 		
-		final List<FileObject> files = new ArrayList<FileObject>();
+		final Set<FileElement> files = new LinkedHashSet<FileElement>();
 		Mockito.doAnswer(new Answer<InitialContentEvent>() {
 			@Override
 			public InitialContentEvent answer(InvocationOnMock invocation) throws Throwable {
-				Set<FileObject> s = ((InitialContentEvent) invocation.getArguments()[0]).getFiles();
+				Set<FileElement> s = ((InitialContentEvent) invocation.getArguments()[0]).getFiles();
 				files.addAll(s);
 				return null;
 			}
@@ -265,7 +255,7 @@ public class AcceptanceTest extends EventVerifier {
 		DirectoryPoller dp = DirectoryPoller.newBuilder()
 				.addListener(listenerMock)
 				.addDirectory(directoryMock)
-				.setFileFilter(new RegexFileFilter(".*\\.txt"))
+				.setDefaultFileFilter(new RegexFileFilter(".*\\.txt"))
 				.setThreadName("NAME")
 				.setPollingInterval(200, TimeUnit.MILLISECONDS)
 				.start();
@@ -285,139 +275,4 @@ public class AcceptanceTest extends EventVerifier {
 				);
 		Mockito.verifyNoMoreInteractions(listenerMock);
 	}
-	
-//	@Test
-//	@Ignore
-//	public void initiallyIoErrorRaisedThenCeased() throws Exception {
-//		// given 
-//		Mockito.when(directoryMock.listFiles())
-//		.thenThrow(new IOException())
-//		.thenReturn(null)
-//		.thenReturn(list("fileA/1", "fileB/1"));
-//		
-//		// when
-//		DirectoryPoller dp = DirectoryPoller.newBuilder()
-//				.addListener(listenerMock)
-//				.setDirectory(directoryMock)
-//				.setPollingInterval(10, TimeUnit.MILLISECONDS)
-//				.start();
-//		TimeUnit.MILLISECONDS.sleep(25);
-//		dp.stop();
-//		
-//		// then
-//		verifyInOrder_BeforeStartEvent();
-//
-//		// cycle#1
-//		verifyInOrder_BeforePollingCycleEvent();
-//		verifyInOrder_ioErrorRaisedEvent();
-//		verifyInOrder_AfterPollingCycleEvent();
-//		
-//		// cycle#2
-//		verifyInOrder_BeforePollingCycleEvent();
-//		verifyInOrder_AfterPollingCycleEvent();
-//		
-//		// cycle#3
-//		verifyInOrder_BeforePollingCycleEvent();
-//		verifyInOrder_ioErrorCeasedEvent();
-//		verifyInOrder_InitialDirectoryContentEvent();
-//		verifyInOrder_AfterPollingCycleEvent();
-//
-//		verifyInOrder_AfterStopEvent();
-//		
-//		Mockito.verifyNoMoreInteractions(listenerMock);
-//	}
-//	
-//	@Test
-//	@Ignore
-//	public void removeOnefileAndModifyOneFile() throws Exception {
-//		// given 
-//		Mockito.when(directoryMock.listFiles())
-//		.thenReturn(list("fileA/1"))
-//		.thenReturn(list("fileA/1", "fileB/1"))
-//		.thenReturn(list("fileA/2", "fileC/1"));
-//		
-//		// when
-//		DirectoryPoller dp = DirectoryPoller.newBuilder()
-//				.addListener(listenerMock)
-//				.setDirectory(directoryMock)
-//				.setPollingInterval(100, TimeUnit.MILLISECONDS)
-//				.start();
-//		TimeUnit.MILLISECONDS.sleep(350);
-//		dp.stop();
-//		
-//		// then
-//		verifyInOrder_BeforeStartEvent();
-//
-//		// cycle#1
-//		verifyInOrder_BeforePollingCycleEvent();
-//		verifyInOrder_InitialDirectoryContentEvent();
-//		verifyInOrder_AfterPollingCycleEvent();
-//		
-//		// cycle#2
-//		verifyInOrder_BeforePollingCycleEvent();
-//		verifyInOrder_fileAddedEvent();
-//		verifyInOrder_AfterPollingCycleEvent();
-//
-//		// cycle#3
-//		verifyInOrder_BeforePollingCycleEvent();
-//		verifyInOrder_FileRemovedEvent();
-//		verifyInOrder_FileAddedEvent();
-//		verifyInOrder_FileModifiedEvent();
-//		verifyInOrder_AfterPollingCycleEvent();
-//
-//		// cycle#4
-//		verifyInOrder_BeforePollingCycleEvent();
-//		verifyInOrder_AfterPollingCycleEvent();
-//
-//		verifyInOrder_AfterStopEvent();
-//		
-//		Mockito.verifyNoMoreInteractions(listenerMock);
-//	}
-//	
-//	@Test
-//	@Ignore
-//	public void initialDirectoryContent() throws Exception {
-//		// given 
-//		Mockito.when(directoryMock.listFiles(Mockito.any(FileFilter.class)))
-//		.thenReturn(list("fileA/1", "fileB/1"))
-//		.thenReturn(list("fileA/1", "fileB/1"));
-//		
-//		final List<PolledFile> files = new ArrayList<PolledFile>();
-//		Mockito.doAnswer(new Answer<InitialContentEvent>() {
-//			@Override
-//			public InitialContentEvent answer(InvocationOnMock invocation) throws Throwable {
-//				Set<PolledFile> s = ((InitialContentEvent) invocation.getArguments()[0]).getFiles();
-//				files.addAll(s);
-//				return null;
-//			}
-//		}).when(listenerMock).initialContent(Mockito.any(InitialContentEvent.class));
-//
-//		// when
-//		DirectoryPoller dp = DirectoryPoller.newBuilder()
-//				.addListener(listenerMock)
-//				.setDirectory(directoryMock)
-//				.setPollingInterval(10, TimeUnit.MILLISECONDS)
-//				.start();
-//		TimeUnit.MILLISECONDS.sleep(15);
-//		dp.stop();
-//		
-//		// then
-//		Assertions.assertThat(files).containsAll(list("fileA/1", "fileB/1"));
-//		
-//		verifyInOrder_BeforeStartEvent();
-//
-//		// cycle#1
-//		verifyInOrder_BeforePollingCycleEvent();
-//		verifyInOrder_InitialDirectoryContentEvent();
-//		verifyInOrder_AfterPollingCycleEvent();
-//		
-//		// cycle#2
-//		verifyInOrder_BeforePollingCycleEvent();
-//		verifyInOrder_AfterPollingCycleEvent();
-//
-//		verifyInOrder_AfterStopEvent();
-//		
-//		Mockito.verifyNoMoreInteractions(listenerMock);
-//	}
-	
 }
