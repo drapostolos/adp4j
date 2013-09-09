@@ -11,7 +11,7 @@ public interface DirectoryListener extends Adp4jListener{
 	/**
 	 * Invoked each time a new file is added in the {@link PolledDirectory}.
 	 * 
-	 * @param event
+	 * @param event provided by the {@link DirectoryPoller}.
 	 */
 	void fileAdded(FileAddedEvent event);
 

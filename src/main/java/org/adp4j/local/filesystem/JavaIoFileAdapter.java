@@ -8,16 +8,40 @@ import java.util.Set;
 import org.adp4j.spi.FileElement;
 import org.adp4j.spi.PolledDirectory;
 
+/**
+ * An adapter for java's {@link File} class, that enables monitoring a directory 
+ * on the local file system. The main purpose of this adapter is to provide
+ * an example how to use an Abstract Directory Poller. 
+ * <p>
+ * Using this to listen to events on your local file system is discouraged, use the Java7 WatchService
+ * functionality instead. For Java6 see other options <a href=http://www.rgagnon.com/javadetails/java-0617.html>here</a>.
+ *
+ */
 public final class JavaIoFileAdapter implements FileElement, PolledDirectory{
 	private final File file;
 
+	/**
+	 * 
+	 * @param file the directory to monitor for changes.
+	 */
 	public JavaIoFileAdapter(File file) {
 		if(file == null){
 			throw new NullPointerException("null argument not allowed!");
 		}
 		this.file = file;
 	}
+	
+	/**
+	 * 
+	 * @return the {@link File} object wrapped by this adapter object.
+	 */
+	public File getFile(){
+		return file;
+	}
 
+	/**
+	 * @see File#lastModified()
+	 */
 	@Override
 	public long lastModified() throws IOException {
 		long lastModified = file.lastModified();
@@ -30,11 +54,17 @@ public final class JavaIoFileAdapter implements FileElement, PolledDirectory{
 		return lastModified;
 	}
 
+	/**
+	 * @see File#isDirectory()
+	 */
 	@Override
 	public boolean isDirectory() {
 		return file.isDirectory();
 	}
 
+	/**
+	 * @see File#getName()
+	 */
 	@Override
 	public String getName() {
 		return file.getName();
@@ -79,6 +109,9 @@ public final class JavaIoFileAdapter implements FileElement, PolledDirectory{
 		return result;
 	}
 
+	/**
+	 * @see File#toString()
+	 */
 	@Override
 	public String toString() {
 		return file.toString();

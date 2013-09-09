@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.adp4j.core.AbstractListener;
+import org.adp4j.core.AbstractAdp4jListener;
 import org.adp4j.core.AfterPollingCycleEvent;
 import org.adp4j.core.BeforePollingCycleEvent;
 import org.adp4j.core.DefaultFileFilter;
@@ -34,7 +34,7 @@ public class PollerTaskRuntimeExceptionThrownTest extends EventVerifier{
 		PowerMockito.mockStatic(LoggerFactory.class);
 		Mockito.when(LoggerFactory.getLogger(PollerTask.class)).thenReturn(loggerMock);
 		PolledDirectory directory = Mockito.mock(PolledDirectory.class);
-		listenerMock = Mockito.mock(AbstractListener.class);
+		listenerMock = Mockito.mock(AbstractAdp4jListener.class);
 		inOrder = Mockito.inOrder(listenerMock);
 		DirectoryPoller dp = Mockito.mock(DirectoryPoller.class);
 		Mockito.when(dp.getDefaultFileFilter()).thenReturn(new DefaultFileFilter());

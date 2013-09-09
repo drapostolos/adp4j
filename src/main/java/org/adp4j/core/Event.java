@@ -2,7 +2,7 @@ package org.adp4j.core;
 
 
 abstract class Event{
-	protected final DirectoryPoller dp;
+	final DirectoryPoller dp;
 
 	Event(DirectoryPoller directoryPoller) {
 		dp = directoryPoller;

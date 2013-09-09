@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.adp4j.core.AbstractListener;
+import org.adp4j.core.AbstractAdp4jListener;
 import org.adp4j.core.AfterPollingCycleEvent;
 import org.adp4j.core.BeforePollingCycleEvent;
 import org.adp4j.core.DefaultFileFilter;
@@ -37,7 +37,7 @@ public class PollerTaskTest extends EventVerifier {
 	@Before
 	public void testFixture() throws Exception {
 		directoryMock = Mockito.mock(PolledDirectory.class);
-		listenerMock = Mockito.mock(AbstractListener.class);
+		listenerMock = Mockito.mock(AbstractAdp4jListener.class);
 		inOrder = Mockito.inOrder(listenerMock);
 		directoryPollerMock = Mockito.mock(DirectoryPoller.class);
 		Mockito.when(directoryPollerMock.getDefaultFileFilter()).thenReturn(new DefaultFileFilter());

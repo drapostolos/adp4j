@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
  * It is up to the client to implement any desired methods.
  *
  */
-public class AbstractListener implements DirectoryListener, IoErrorListener, DirectoryPollerListener, PollCycleListener, InitialContentListener{
-	private static final Logger logger = LoggerFactory.getLogger(AbstractListener.class);
+public class AbstractAdp4jListener implements DirectoryListener, IoErrorListener, DirectoryPollerListener, PollCycleListener, InitialContentListener{
+	private static final Logger logger = LoggerFactory.getLogger(AbstractAdp4jListener.class);
 
 	/**
 	 * Dummy implementation doing nothing.

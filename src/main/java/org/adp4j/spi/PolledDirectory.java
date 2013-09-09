@@ -44,7 +44,6 @@ public interface PolledDirectory {
 	 * from the {@link DirectoryPoller}.
 	 * 
 	 * @param obj
-	 * @return
 	 */
 	@Override
 	public boolean equals(Object obj);
@@ -52,7 +51,6 @@ public interface PolledDirectory {
 	/**
 	 * It is recommended to implement this method if clients will remove a {@link PolledDirectory}
 	 * from the {@link DirectoryPoller}.
-	 * 
 	 */
 	@Override
 	public int hashCode();

@@ -12,7 +12,7 @@ import org.mockito.Mockito;
 class EventVerifier {
 
 	protected PollerTask pollerTask;
-	protected AbstractListener listenerMock;
+	protected AbstractAdp4jListener listenerMock;
 	protected InOrder inOrder;
 	protected Set<PolledDirectory> directories = new LinkedHashSet<PolledDirectory>();
 	protected PolledDirectory directoryMock;

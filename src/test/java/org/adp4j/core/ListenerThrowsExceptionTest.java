@@ -1,6 +1,6 @@
 package org.adp4j.core;
 
-import org.adp4j.core.AbstractListener;
+import org.adp4j.core.AbstractAdp4jListener;
 import org.adp4j.core.BeforeStartEvent;
 import org.adp4j.core.DirectoryPoller;
 import org.adp4j.core.ListenerNotifier;
@@ -25,7 +25,7 @@ public class ListenerThrowsExceptionTest {
 		Logger loggerMock = Mockito.mock(Logger.class);
 		PowerMockito.mockStatic(LoggerFactory.class);
 		Mockito.when(LoggerFactory.getLogger(ListenerNotifier.class)).thenReturn(loggerMock);
-		AbstractListener listenerMock = Mockito.mock(AbstractListener.class);
+		AbstractAdp4jListener listenerMock = Mockito.mock(AbstractAdp4jListener.class);
 		Mockito.doThrow(RuntimeException.class).when(listenerMock).beforeStart(Mockito.any(BeforeStartEvent.class));
 		PolledDirectory directoryMock = Mockito.mock(PolledDirectory.class);
 
