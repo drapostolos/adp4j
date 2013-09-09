@@ -13,7 +13,7 @@ abstract class AbstractDirectoryEvent extends Event{
 	/**
 	 * Return The {@link PolledDirectory} instance, where this event occurred. 
 	 */
-	public PolledDirectory getDirectory() {
+	public PolledDirectory getPolledDirectory() {
 		return directory;
 	}
 

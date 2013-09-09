@@ -51,7 +51,7 @@ public class AbstractAdp4jListener implements DirectoryListener, IoErrorListener
 	@Override
 	public void ioErrorRaised(IoErrorRaisedEvent event) {
 		String message = "I/O error raised when polling directory '%s'!"; 
-		PolledDirectory dir = event.getDirectory();
+		PolledDirectory dir = event.getPolledDirectory();
 		IOException e = event.getIoException();
 		logger.error(String.format(message, dir), e);
 	}
@@ -62,7 +62,7 @@ public class AbstractAdp4jListener implements DirectoryListener, IoErrorListener
 	@Override
 	public void ioErrorCeased(IoErrorCeasedEvent event) {
 		String message = "I/O error ceased when polling directory '%s'!"; 
-		PolledDirectory dir = event.getDirectory();
+		PolledDirectory dir = event.getPolledDirectory();
 		logger.info(String.format(message, dir));
 	}
 

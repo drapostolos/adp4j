@@ -26,7 +26,7 @@ public class EventsTest {
 		
 		// then
 		Assertions.assertThat(event.getIoException()).isEqualTo(e);
-		Assertions.assertThat(event.getDirectory()).isEqualTo(directory);
+		Assertions.assertThat(event.getPolledDirectory()).isEqualTo(directory);
 		Assertions.assertThat(event.getDirectoryPoller()).isEqualTo(dp);
 		
 	}
@@ -43,7 +43,7 @@ public class EventsTest {
 		
 		// then
 		Assertions.assertThat(event.getFileElement()).isEqualTo(file);
-		Assertions.assertThat(event.getDirectory()).isEqualTo(directory);
+		Assertions.assertThat(event.getPolledDirectory()).isEqualTo(directory);
 		Assertions.assertThat(event.getDirectoryPoller()).isEqualTo(dp);
 		
 	}
