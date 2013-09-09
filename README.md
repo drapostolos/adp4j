@@ -1,4 +1,4 @@
-Abstract Directory Poller
+Abstract Directory Poller for Java (ADP4J)
 =======
 
 This library provides a Java SPI for polling directories on a REMOTE filesystem/ftp servers (etc) for changes (like file-Added/Removed/Modified).
