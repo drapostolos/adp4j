@@ -4,7 +4,7 @@
 	<groupId>com.github.drapostolos</groupId>
 	<artifactId>adp4j</artifactId>
 	<name>adp4j</name>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0</version>
 	<packaging>jar</packaging>
 
 	<url>http://maven.apache.org</url>
@@ -195,8 +195,8 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:git:git@github.com/drapostolos/adp4j.git</connection>
-		<developerConnection>scm:git:git@github.com/drapostolos/adp4j.git</developerConnection>
-		<url>git@github.com/drapostolos/adp4j.git</url>
+		<connection>scm:git:drapostolos@github.com/drapostolos/adp4j.git</connection>
+		<developerConnection>scm:git:drapostolos@github.com/drapostolos/adp4j.git</developerConnection>
+		<url>drapostolos@github.com/drapostolos/adp4j.git</url>
 	</scm>
 </project>
