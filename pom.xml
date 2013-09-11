@@ -195,8 +195,8 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:git:drapostolos@github.com/drapostolos/adp4j.git</connection>
-		<developerConnection>scm:git:drapostolos@github.com/drapostolos/adp4j.git</developerConnection>
-		<url>drapostolos@github.com/drapostolos/adp4j.git</url>
+		<connection>scm:git:https://github.com/drapostolos/adp4j.git</connection>
+		<developerConnection>scm:git:https://github.com/drapostolos/adp4j.git</developerConnection>
+		<url>https://github.com/drapostolos/adp4j.git</url>
 	</scm>
 </project>
