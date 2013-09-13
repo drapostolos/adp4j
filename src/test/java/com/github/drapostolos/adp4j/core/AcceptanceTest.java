@@ -40,7 +40,7 @@ public class AcceptanceTest extends EventVerifier {
 		
 		// when
 		DirectoryPoller dp = DirectoryPoller.newBuilder()
-				.addDirectory(directoryMock)
+				.addPolledDirectory(directoryMock)
 				.enableParallelPollingOfDirectories()
 				.setPollingInterval(10, TimeUnit.MILLISECONDS)
 				.start();
@@ -58,7 +58,7 @@ public class AcceptanceTest extends EventVerifier {
 		
 		// when
 		DirectoryPoller dp = DirectoryPoller.newBuilder()
-				.addDirectory(directoryMock)
+				.addPolledDirectory(directoryMock)
 				.start();
 		dp.stop();
 		
@@ -74,7 +74,7 @@ public class AcceptanceTest extends EventVerifier {
 		
 		// when
 		DirectoryPoller dp = DirectoryPoller.newBuilder()
-				.addDirectory(directoryMock)
+				.addPolledDirectory(directoryMock)
 				.enableFileAddedEventsForInitialContent()
 				.setPollingInterval(10, TimeUnit.MILLISECONDS)
 				.start();
@@ -92,7 +92,7 @@ public class AcceptanceTest extends EventVerifier {
 		
 		// when
 		DirectoryPoller dp = DirectoryPoller.newBuilder()
-				.addDirectory(directoryMock)
+				.addPolledDirectory(directoryMock)
 				.start();
 		dp.stop();
 		
@@ -108,7 +108,7 @@ public class AcceptanceTest extends EventVerifier {
 		
 		// when
 		DirectoryPoller dp = DirectoryPoller.newBuilder()
-				.addDirectory(directoryMock)
+				.addPolledDirectory(directoryMock)
 				.addListener(listenerMock)
 				.enableFileAddedEventsForInitialContent()
 				.setPollingInterval(10, TimeUnit.MILLISECONDS)
@@ -136,7 +136,7 @@ public class AcceptanceTest extends EventVerifier {
 		
 		// when
 		DirectoryPoller dp = DirectoryPoller.newBuilder()
-				.addDirectory(directoryMock)
+				.addPolledDirectory(directoryMock)
 				.setPollingInterval(10, TimeUnit.MILLISECONDS)
 				.start();
 		dp.addDirectory(directoryMock2);
@@ -165,7 +165,7 @@ public class AcceptanceTest extends EventVerifier {
 		
 		// when
 		DirectoryPoller dp = DirectoryPoller.newBuilder()
-				.addDirectory(directoryMock)
+				.addPolledDirectory(directoryMock)
 				.setPollingInterval(10, TimeUnit.MILLISECONDS)
 				.start();
 		dp.addListener(listenerMock);
@@ -190,7 +190,7 @@ public class AcceptanceTest extends EventVerifier {
 		
 		// when
 		DirectoryPoller dp = DirectoryPoller.newBuilder()
-				.addDirectory(directoryMock)
+				.addPolledDirectory(directoryMock)
 				.addListener(listenerMock)
 				.setPollingInterval(10, TimeUnit.MILLISECONDS)
 				.start();
@@ -210,7 +210,7 @@ public class AcceptanceTest extends EventVerifier {
 		
 		// when
 		DirectoryPoller dp = DirectoryPoller.newBuilder()
-				.addDirectory(directoryMock)
+				.addPolledDirectory(directoryMock)
 				.start();
 		dp.stop();
 		
@@ -227,7 +227,7 @@ public class AcceptanceTest extends EventVerifier {
 		// when
 		DirectoryPoller dp = DirectoryPoller.newBuilder()
 				.addListener(listenerMock)
-				.addDirectory(directoryMock)
+				.addPolledDirectory(directoryMock)
 				.setPollingInterval(200, TimeUnit.MILLISECONDS)
 				.start();
 		TimeUnit.MILLISECONDS.sleep(10);
@@ -264,7 +264,7 @@ public class AcceptanceTest extends EventVerifier {
 		// when
 		DirectoryPoller dp = DirectoryPoller.newBuilder()
 				.addListener(listenerMock)
-				.addDirectory(directoryMock)
+				.addPolledDirectory(directoryMock)
 				.setDefaultFileFilter(new RegexFileFilter(".*\\.txt"))
 				.setThreadName("NAME")
 				.setPollingInterval(200, TimeUnit.MILLISECONDS)

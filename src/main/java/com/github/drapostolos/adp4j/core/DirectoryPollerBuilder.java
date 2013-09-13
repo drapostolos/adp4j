@@ -5,8 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.tools.FileObject;
-
+import com.github.drapostolos.adp4j.spi.FileElement;
 import com.github.drapostolos.adp4j.spi.PolledDirectory;
 
 /**
@@ -75,7 +74,7 @@ public final class DirectoryPollerBuilder {
 	 * 
 	 * @return {@link DirectoryPollerBuilder}
 	 */
-	public DirectoryPollerBuilder addDirectory(PolledDirectory directory) {
+	public DirectoryPollerBuilder addPolledDirectory(PolledDirectory directory) {
 		if(directory == null){
 			throw new NullPointerException(NULL_ARGUMENT_ERROR_MESSAGE);
 		}
@@ -103,10 +102,10 @@ public final class DirectoryPollerBuilder {
 	}
 
 	/**
-	 * Set a {@link FileFilter} to be used. Only {@link FileObject}'s 
+	 * Set a {@link FileFilter} to be used. Only {@link FileElement}'s 
 	 * Satisfying the filter will be considered.
 	 * <p>
-	 * Optional setting. By default all {@link FileObject}'s are 
+	 * Optional setting. By default all {@link FileElement}'s are 
 	 * satisfying the filter.
 	 * 
 	 * @param filter FileFilter

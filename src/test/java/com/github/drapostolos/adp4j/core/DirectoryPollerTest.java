@@ -26,7 +26,7 @@ public class DirectoryPollerTest {
 		// given
 		PolledDirectory directoryMock = Mockito.mock(PolledDirectory.class);
 		DirectoryPoller dp = DirectoryPoller.newBuilder()
-				.addDirectory(directoryMock)
+				.addPolledDirectory(directoryMock)
 				.start();
 		
 		// when
@@ -38,7 +38,7 @@ public class DirectoryPollerTest {
 		// given
 		PolledDirectory directoryMock = Mockito.mock(PolledDirectory.class);
 		DirectoryPoller dp = DirectoryPoller.newBuilder()
-				.addDirectory(directoryMock)
+				.addPolledDirectory(directoryMock)
 				.start();
 		
 		// when
@@ -50,7 +50,7 @@ public class DirectoryPollerTest {
 		// given
 		PolledDirectory directoryMock = Mockito.mock(PolledDirectory.class);
 		DirectoryPoller dp = DirectoryPoller.newBuilder()
-				.addDirectory(directoryMock)
+				.addPolledDirectory(directoryMock)
 				.start();
 		
 		// when
@@ -62,7 +62,7 @@ public class DirectoryPollerTest {
 		// given
 		PolledDirectory directoryMock = Mockito.mock(PolledDirectory.class);
 		DirectoryPoller dp = DirectoryPoller.newBuilder()
-				.addDirectory(directoryMock)
+				.addPolledDirectory(directoryMock)
 				.start();
 		
 		// when

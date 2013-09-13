@@ -33,7 +33,7 @@ public class ListenerThrowsExceptionTest {
 		// when
 		DirectoryPoller.newBuilder()
 		.addListener(listenerMock)
-		.addDirectory(directoryMock)
+		.addPolledDirectory(directoryMock)
 		.start();
 
 		// then

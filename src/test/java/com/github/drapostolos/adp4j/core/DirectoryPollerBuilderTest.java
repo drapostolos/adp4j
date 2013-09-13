@@ -12,7 +12,7 @@ public class DirectoryPollerBuilderTest {
 	
 	@Test(expected = NullPointerException.class)
 	public void nullDirectory() throws Exception {
-		builder.addDirectory(null);
+		builder.addPolledDirectory(null);
 	}
 
 	@Test(expected = NullPointerException.class)
