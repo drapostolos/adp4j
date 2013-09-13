@@ -1,16 +1,6 @@
 Abstract Directory Poller for Java (ADP4J)
 =======
 
-This library provides a Java SPI for polling directories on a REMOTE filesystem/ftp servers (etc) for changes (like file-Added/Removed/Modified).
+This library provides a Java SPI for polling directories on a REMOTE filesystem.
 
-The provider simply needs to implement these two interfaces:
-
-public interface PolledDirectory {
-	Set<FileElement> listFiles() throws IOException;
-}
-
-public interface FileElement {
-	long lastModified() throws IOException;
-	boolean isDirectory();
-	String getName();
-}
+For more information see the [User Guide | https://github.com/drapostolos/adp4j/wiki/User-Guide]
