@@ -5,6 +5,8 @@ import java.util.Set;
 
 import com.github.drapostolos.adp4j.core.DirectoryPoller;
 import com.github.drapostolos.adp4j.core.DirectoryPollerException;
+import com.github.drapostolos.adp4j.core.IoErrorListener;
+import com.github.drapostolos.adp4j.core.IoErrorRaisedEvent;
 
 /**
  * Implementations of this interface represents the directory to poll for 
@@ -14,7 +16,8 @@ import com.github.drapostolos.adp4j.core.DirectoryPollerException;
 public interface PolledDirectory {
 	
 	/**
-	 * Returns a snapshot of all current {@link FileElement}s in this directory.
+	 * Returns a snapshot of the current content in this directory, i.e.
+	 * listing all {@link FileElement}s in this directory.
 	 * <p>
 	 * Returning a {@code null} value will be treated the same as if an 
 	 * {@link IOException} was thrown.
@@ -27,21 +30,25 @@ public interface PolledDirectory {
 	 * @return a list of {@link FileElement}s in this directory
 	 * 
 	 * @throws IOException if not possible to list files in this directory, due
-	 * to I/O error.
+	 * to I/O error. Throwing {@link IOException} will fire a {@link IoErrorRaisedEvent}
+	 * event in {@link IoErrorListener#ioErrorRaised(IoErrorRaisedEvent)}.
 	 * 
-	 * @throws DirectoryPollerException if any other error (besides 
-	 * {@link IOException}) is detected. This will cause the Directory-Poller 
-	 * to silently skip this poll-cycle and wait for next poll-cycle.
 	 * 
-	 * @throws RuntimeException if any unpredictable error occurs. This will 
+	 * @throws DirectoryPollerException For errors you don't want firing 
+	 * {@link IoErrorRaisedEvent} events for. This will cause the Directory-Poller 
+	 * to silently skip this poll-cycle and wait for next poll-cycle. In Other
+	 * words use this exception when you think it is possible to recover within
+	 * next coming poll-cycles (Keep a MaxRetries counter or similar in your implementation).
+	 * 
+	 * @throws Throwable if any unexpected crashes occurs. This will 
 	 * cause the Directory-Poller to log an error message (along with the causing 
-	 * RuntimeException) and wait for next poll-cycle.
+	 * {@link Throwable}) and stop the {@link DirectoryPoller}.
 	 */ 
 	Set<FileElement> listFiles() throws IOException;
 	
 	/**
-	 * It is recommended to implement this method if clients will remove a {@link PolledDirectory}
-	 * from the {@link DirectoryPoller}.
+	 * It is recommended to implement this method if clients wants to remove this
+	 * {@link PolledDirectory} from the {@link DirectoryPoller}.
 	 * 
 	 * @param obj
 	 */
@@ -49,8 +56,8 @@ public interface PolledDirectory {
 	public boolean equals(Object obj);
 	
 	/**
-	 * It is recommended to implement this method if clients will remove a {@link PolledDirectory}
-	 * from the {@link DirectoryPoller}.
+	 * It is recommended to implement this method if clients wants to remove this
+	 * {@link PolledDirectory} from the {@link DirectoryPoller}.
 	 */
 	@Override
 	public int hashCode();

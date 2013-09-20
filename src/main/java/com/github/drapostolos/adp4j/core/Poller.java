@@ -27,7 +27,7 @@ class Poller implements Callable<Object>{
 	private boolean isSecondPollCycleOrLater = false;
 	private boolean isFilesystemUnaccessible = true;
 	private HashMapComparer<String, FileElementCacher> mapComparer;
-	
+
 	Poller(DirectoryPoller dp, PolledDirectory directory) {
 		this.dp = dp;
 		this.directory = directory;
@@ -35,7 +35,7 @@ class Poller implements Callable<Object>{
 		this.notifier = dp.notifier;
 		this.fileAddedEventEnabledForInitialContent = dp.fileAddedEventEnabledForInitialContent;
 	}
-	
+
 	public Object call() {
 		listCurrentFilesAndNotifyListenersIfIoErrorRaisedOrCeased();
 		if(isFilesystemAccessible()){
@@ -115,16 +115,19 @@ class Poller implements Callable<Object>{
 			}
 		} catch(DirectoryPollerException e){
 			// Silently wait fore next poll.
-		} catch (RuntimeException e){
-			String message = new StringBuilder()
-			.append("RuntimeException was thrown by class '%s'. ")
-			.append("See underlying exception for more info.")
-			.toString();
-			logger.error(String.format(message, directory.getClass().getName()), e);
+		} catch (Throwable e){
+			dp.timer.cancel();
+			String message = 
+			"DirectoryPoller is stopped (effectively after current poll-cycle) "
+			+ "due to unexpected crash in PolledDirectory implementation '%s'. "
+			+ "See underlying exception for more info.";
+			message = String.format(message, directory.getClass().getName());
+			logger.error(message, e);
+			throw new IllegalStateException(message, e);
 		}
 	}
-	
- 	boolean isFilesystemAccessible(){
+
+	boolean isFilesystemAccessible(){
 		return isFilesystemUnaccessible;
 	}
 	boolean isFilesystemUnaccessible(){
@@ -143,7 +146,7 @@ class Poller implements Callable<Object>{
 		for(FileElementCacher file : mapComparer.getRemoved().values()){
 			notifier.notifyListeners(new FileRemovedEvent(dp, directory, file.fileElement));
 		}
-		
+
 		for(FileElementCacher file : mapComparer.getAdded().values()){
 			notifier.notifyListeners(new FileAddedEvent(dp, directory, file.fileElement));
 		}
