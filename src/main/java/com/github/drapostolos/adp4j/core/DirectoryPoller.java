@@ -29,13 +29,13 @@ import com.github.drapostolos.adp4j.spi.PolledDirectory;
 public class DirectoryPoller {
 	private static final long WITH_NO_DELAY = 0;
 	private static AtomicInteger threadCount = new AtomicInteger();
-	Timer timer;
 	private PollerTask pollerTask;
 	private FileFilter filter;
 	private long pollingIntervalInMillis;
 	private String threadName;
 
 	// Below are passed to PollerTask
+	Timer timer;
 	ListenerNotifier notifier;
 	boolean fileAddedEventEnabledForInitialContent;
 	boolean parallelDirectoryPollingEnabled;

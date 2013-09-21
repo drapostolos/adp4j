@@ -1,8 +1,8 @@
 package com.github.drapostolos.adp4j.core;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Timer;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,15 +13,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.drapostolos.adp4j.core.AbstractAdp4jListener;
-import com.github.drapostolos.adp4j.core.Adp4jListener;
-import com.github.drapostolos.adp4j.core.AfterPollingCycleEvent;
-import com.github.drapostolos.adp4j.core.BeforePollingCycleEvent;
-import com.github.drapostolos.adp4j.core.DefaultFileFilter;
-import com.github.drapostolos.adp4j.core.DirectoryPoller;
-import com.github.drapostolos.adp4j.core.InitialContentEvent;
-import com.github.drapostolos.adp4j.core.ListenerNotifier;
-import com.github.drapostolos.adp4j.core.PollerTask;
 import com.github.drapostolos.adp4j.spi.PolledDirectory;
 
 @RunWith(PowerMockRunner.class)
@@ -41,6 +32,7 @@ public class PollerTaskRuntimeExceptionThrownTest extends EventVerifier{
 		Mockito.when(dp.getDefaultFileFilter()).thenReturn(new DefaultFileFilter());
 		dp.directories = new HashSet<PolledDirectory>(Arrays.asList(directory));
 		dp.notifier = new ListenerNotifier(new HashSet<Adp4jListener>(Arrays.asList(listenerMock)));
+		dp.timer = Mockito.mock(Timer.class);
 		pollerTask = new PollerTask(dp);
 		
 		Mockito.when(directory.listFiles())
@@ -61,8 +53,8 @@ public class PollerTaskRuntimeExceptionThrownTest extends EventVerifier{
 				BeforePollingCycleEvent.class,
 				AfterPollingCycleEvent.class
 				);
-		
-		Mockito.verify(loggerMock).error(Mockito.anyString(), Mockito.any(IOException.class));
+		Mockito.verify(dp.timer).cancel();
+		Mockito.verify(loggerMock).error(Mockito.anyString(), Mockito.any(Throwable.class));
 		Mockito.verifyNoMoreInteractions(listenerMock);
 	}
 }
